@@ -382,7 +382,7 @@
     </div>
 
 
-    <div class="back_top"><a href="#top"><img src="images/up.gif" width="55" height="55" border="0"/></a></div>
+    <!--<div class="back_top"><a href="#top"><img src="images/up.gif" width="55" height="55" border="0"/></a></div>-->
 </div>
 
 <div class="footer_bg">
@@ -428,7 +428,58 @@
         color: red;
         font-size: 13px;
     }
+
+    #back-top {
+        position: fixed;
+        bottom: 30px;
+        right: 40px;
+        /*margin-right: -150px;*/
+    }
+
+    #back-top a {
+        width: 80px;
+        display: block;
+        text-align: center;
+        font: 11px/100% Arial, Helvetica, sans-serif;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: #bbb;
+
+        /* transition */
+        -webkit-transition: 1s;
+        -moz-transition: 1s;
+        transition: 1s;
+    }
+
+
+        /* arrow icon (span tag) */
+    #back-top span {
+        width: 80px;
+        height: 80px;
+        display: block;
+        margin-bottom: 7px;
+        background:  url(images/up.gif) no-repeat center center;
+
+        /* rounded corners */
+        -webkit-border-radius: 15px;
+        -moz-border-radius: 15px;
+        border-radius: 15px;
+
+        /* transition */
+        -webkit-transition: 1s;
+        -moz-transition: 1s;
+        transition: 1s;
+    }
+
+
 </style>
+
+
+<p id="back-top">
+    <a href="#top"><span></span>Top</a>
+</p>
+
+
 </body>
 </html>
 <script type="text/javascript" src="javascripts/jquery.js"></script>
@@ -516,5 +567,33 @@
             $(showElementClass).first().fadeToggle();
         });
     });
+
+
+    $(document).ready(function(){
+
+        // hide #back-top first
+        $("#back-top").hide();
+
+        // fade in #back-top
+        $(function () {
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+                    $('#back-top').fadeIn();
+                } else {
+                    $('#back-top').fadeOut();
+                }
+            });
+
+            // scroll body to 0px on click
+            $('#back-top a').click(function () {
+                $('body,html').animate({
+                    scrollTop: 0
+                }, 800);
+                return false;
+            });
+        });
+
+    });
+
 </script>
 
