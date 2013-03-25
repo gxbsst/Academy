@@ -300,26 +300,26 @@
         <div class="rc_title"><span class="ct_1">REGISTER</span><span class="ct_2">Book your courses and examinations here:</span>
         </div>
         <div class="rc_con" id="form">
-            <form action="cc.php" method="post">
+            <form action="/create" method="post">
                 <div class="rcc_sm">(* are required items)</div>
                 <div class="rcc_input">
             <span class="rci_1">
-              <input type="text" id="name" class="input1 required"/>
+              <input type="text" name="name" id="name" class="input1 required"/>
               <b style="display:none;">Please enter your name</b>
             </span>
             <span class="rci_1">
-              <input type="text" id="tel" class="input2 required"/>
+              <input type="text" name="tel" id="tel" class="input2 required"/>
               <b style="display:none;">Please enter your telephone</b>
             </span>
             <span class="rci_1">
-              <input type="text" id="email" class="input3 required"/>
+              <input type="text" name="email" id="email" class="input3 required"/>
               <b style="display:none;">Please enter your email</b>
             </span>
             <span class="rci_1">
-              <input type="text" id="course_name" class="input4 required"/>
+              <input type="text" name="course_name" id="course_name" class="input4 required"/>
               <b style="display:none;">Please enter course name</b>
             </span>
-                    <span class="rci_2"><textarea name="" cols="" rows="" class="input5"></textarea></span>
+                    <span class="rci_2"><textarea name="note" cols="" rows="" class="input5"></textarea></span>
                 </div>
                 <div class="rcc_sm2">Tick the box here to certify that you are above 18 years old and legal to consume
                     alcoholic drinks according to the law of your homeland nation.
@@ -327,6 +327,9 @@
 
                 <div class="submit_outer submit">
                     <input class="" type="image" src="images/reg_pic10.gif" name="submit"/>
+                    <div id="result"></div>
+                    <span id="loading" style="display: none">sending ......</span>
+
                     <!--
                                 <a href="#"><img src="images/reg_pic10.gif" width="138" height="36" /></a>
                     -->
@@ -471,7 +474,36 @@
     requiredFilledIn();
 
 
+
     $(document).ready(function(){
+
+        $("#form > form").submit(postRegister);
+
+        function postRegister(e){
+            e.preventDefault();
+            var form = $(this).serialize();
+            $.ajax('/create',
+                    {
+                        data: form,
+                        dataType: 'json',
+                        type: 'post',
+                        beforeSend:function(){
+                            $('#loading').show();
+                        },
+                        complete: function(){
+                            $('#loading').hide();
+                            },
+                        success: function(result){
+                            if(result.success == true)
+                                $("#result").text("Congratulations! You have successfully registered!");
+                            else
+                                $("#result").text("failed");
+
+                        }
+
+                    });
+        }
+
         $(".wcc_list .wlc_4").on('click', 'a', function(event){
             event.preventDefault();
             var showElementClass = '.wlc' + $(this).data('number');
