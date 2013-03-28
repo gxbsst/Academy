@@ -506,6 +506,7 @@
 
     // $("#form span").hide();
     $("input,textarea").focus(function () {
+        $("#result").hide();
         $(this).next().fadeIn("slow");
     }).blur(function () {
                 $(this).next().fadeOut("slow");
@@ -546,9 +547,9 @@
                             },
                         success: function(result){
                             if(result.success == true)
-                                $("#result").text("Congratulations! You have successfully registered!");
+                                $("#result").show().text("Congratulations! You have successfully registered!");
                             else
-                                $("#result").text("failed");
+                                $("#result").show().text("failed");
 
                         }
 
