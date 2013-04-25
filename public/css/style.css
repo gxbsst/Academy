@@ -143,7 +143,7 @@ input.input4{ border:none; background:url(../images/reg_pic7.gif) no-repeat; wid
 .rcc_input span.rci_2{ float:left; display:block; height:151px; width:696px; padding-right:70px;}
 textarea.input5{ border:none; background:url(../images/reg_pic8.gif) no-repeat; width:636px; height:151px; padding-left:60px; padding-top:10px; color:#444;}
 
-.rcc_sm2{ font-size:0px; text-indent:-10000px; background:url(../images/reg_pic9.gif) no-repeat; width:680px; height:30px; margin-bottom:30px; margin-top:10px;}
+.rcc_sm2{ font-size:0px; text-indent:-10000px; background:url(../images/reg_pic9.gif) no-repeat 10px 5px; width:690px; height:35px; margin-bottom:30px; margin-top:10px;}
 .submit{ width:696px; text-align:center;}
 
 

@@ -321,7 +321,10 @@
             </span>
                     <span class="rci_2"><textarea name="note" cols="" rows="" class="input5"></textarea></span>
                 </div>
-                <div class="rcc_sm2">Tick the box here to certify that you are above 18 years old and legal to consume
+                <div class="rcc_sm2" style="position: relative">
+                    <input type="checkbox" id="agree" name="agree" checked style="position: absolute; left:0; top: 0" />
+
+                    Tick the box here to certify that you are above 18 years old and legal to consume
                     alcoholic drinks according to the law of your homeland nation.
                 </div>
 
@@ -499,32 +502,38 @@
 
     function requiredFilledIn() {
         if (containsBlanks() || !isValidEmail($("#email").val()))
-            $submit.attr("disabled", "disabled");
+        {
+//            $submit.attr("disabled", "disabled");
+            alert('Please complete this form.');
+            return false;
+        }
         else
+        {
             $submit.removeAttr("disabled");
+            return true;
+        }
+
+
     }
 
     // $("#form span").hide();
-    $("input,textarea").focus(function () {
-        $("#result").hide();
-        $(this).next().fadeIn("slow");
-    }).blur(function () {
-                $(this).next().fadeOut("slow");
-            }).keyup(function () {
-                //Check all required fields.
-                requiredFilledIn();
-            });
+//    $("input,textarea").focus(function () {
+//        $("#result").hide();
+//        $(this).next().fadeIn("slow");
+//    }).blur(function () {
+//                $(this).next().fadeOut("slow");
+//            }).keyup(function () {
+//                //Check all required fields.
+//                requiredFilledIn();
+//            });
 
-    $("#email").keyup(function () {
-        //Check for a valid email.
-        if (isValidEmail($(this).val()))
-            $(this).next().removeClass("error").addClass("valid");
-        else
-            $(this).next().removeClass("valid").addClass("error");
-    });
-
-    requiredFilledIn();
-
+//    $("#email").keyup(function () {
+//        //Check for a valid email.
+//        if (isValidEmail($(this).val()))
+//            $(this).next().removeClass("error").addClass("valid");
+//        else
+//            $(this).next().removeClass("valid").addClass("error");
+//    });
 
 
     $(document).ready(function(){
@@ -533,34 +542,43 @@
 
         function postRegister(e){
             e.preventDefault();
-            var form = $(this).serialize();
-            $.ajax('/create',
-                    {
-                        data: form,
-                        dataType: 'json',
-                        type: 'post',
-                        beforeSend:function(){
-                            $('#loading').show();
-                        },
-                        complete: function(){
-                            $('#loading').hide();
+            if(!$('#agree').is(':checked'))
+            {
+                alert('Please complete this form.');
+                return false;
+            }
+
+            if(requiredFilledIn())
+            {
+                var form = $(this).serialize();
+                $.ajax('/create',
+                        {
+                            data: form,
+                            dataType: 'json',
+                            type: 'post',
+                            beforeSend:function(){
+                                $('#loading').show();
                             },
-                        success: function(result){
-                            if(result.success == true)
-                                $("#result").show().text("Congratulations! You have successfully registered!");
-                            else
-                                $("#result").show().text("failed");
+                            complete: function(){
+                                $('#loading').hide();
+                            },
+                            success: function(result){
+                                if(result.success == true)
+                                    $("#result").show().text("Congratulations! You have successfully registered!");
+                                else
+                                    $("#result").show().text("failed");
 
-                        }
+                            }
 
-                    });
+                        });
+
+            }
         }
 
         $(".wcc_list .wlc_4").on('click', 'a', function(event){
             event.preventDefault();
             var showElementClass = '.wlc' + $(this).data('number');
             $(this).closest('.wsc_con').children('div').filter(function(){
-//                debugger;
                return $(this).attr('class') != $(showElementClass).attr('class');
             }).hide();
 
