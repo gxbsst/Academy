@@ -3,8 +3,6 @@ require 'bundler/capistrano'
 
 set :application, "Academy"
 
-server "www.iwine.com", :web, :app, :db, primary: true
-
 set :default_environment, {
   'LANG' => 'en_US.UTF-8'
 }
@@ -13,13 +11,15 @@ set :deploy_via, :remote_cache
 set :use_sudo, false
 
 set :scm, "git"
-set :repository,  "git@github.com/gxbsst/Academy.git"
+set :repository,  "git://github.com/gxbsst/Academy.git"
 set :branch, "master"
 
 if ENV['RAILS_ENV'] =='production'
+  server "www.iwine.com", :web, :app, :db, primary: true
   set :deploy_to, "/srv/rails/west.iwine.com"
   set :user, "iwine"
 else
+  server "192.168.11.31", :web, :app, :db, primary: true
   set :deploy_to, "/srv/rails/west"
   set :user, "rails"
 end
