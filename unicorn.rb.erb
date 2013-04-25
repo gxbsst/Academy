@@ -1,0 +1,76 @@
+working_directory "<%= current_path %>"
+pid "<%= unicorn_pid %>"
+
+listen 8888, backlog: 2048
+#listen "/tmp/unicorn.<%= application %>.sock"
+#stderr_path "/tmp/unicorn.stderr.log"
+#stdout_path "/tmp/unicorn.stdout.log"
+
+stderr_path "<%= unicorn_log %>"
+stdout_path "<%= unicorn_log %>"
+
+rails_env = ENV['RAILS_ENV'] || 'production'
+worker_processes (rails_env == 'production' ? <%= unicorn_workers %> : 4)
+# https://github.com/gitlabhq/gitlabhq/issues/694 fixed 502 error
+timeout 300
+
+# 需要设置一下rail的路径
+# RAILS_ROOT = "/srv/rails/iwine.com/current"
+
+# 设置生产和开发环境下面跑的worker数量
+
+# rails环境是需要预先加载的， 节省时间和内存
+preload_app true
+
+
+# 监听端口设置， 可以设置成unix socket或者tcp， 这里是用tcp, 因为开发环境可以直接看网站
+# listen '/data/github/current/tmp/sockets/unicorn.sock', :backlog => 2048
+before_fork do |server, worker|
+  ##
+  # 这里是实现重启的时候无缝衔接的代码。
+  # 首先unicorn提供了这样一个机制：
+  # 当我们发送 USR2 信号给master的时候， unicorn就会把旧的pidfile加上.oldbin后缀，
+  # 然后启动一个新的master， 新的master也会fork worker出来。
+  #
+  # 下面的代码就是当新的master起来的时候， 检查oldbin这个文件， 告诉旧的master退出（发送QUIT信号）。
+  # 这样我们保证了无缝重启。
+
+  #old_pid = "<%= current_path %>/tmp/pids/unicorn.pid.oldbin"
+  #if File.exists?(old_pid) && server.pid != old_pid
+  #  begin
+  #    Process.kill("QUIT", File.read(old_pid).to_i)
+  #  rescue Errno::ENOENT, Errno::ESRCH
+  #    # someone else did our job for us
+  #  end
+  #end
+
+  # Disconnect since the database connection will not carry over
+  if defined? ActiveRecord::Base
+    ActiveRecord::Base.connection.disconnect!
+  end
+
+  # Quit the old unicorn process
+  old_pid = "#{server.config[:pid]}.oldbin"
+  if File.exists?(old_pid) && server.pid != old_pid
+    begin
+      Process.kill("QUIT", File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
+  end
+
+
+end
+
+
+after_fork do |server, worker|
+  ##
+  # fork了之后， 原先开启的socket就不能用了， 重新开启
+  # Redis 和 Memcached 的连接是按需的， 不需要重新开启
+  # Start up the database connection again in the worker
+  if defined?(ActiveRecord::Base)
+    ActiveRecord::Base.establish_connection
+  end
+  child_pid = server.config[:pid].sub(".pid", ".#{worker.nr}.pid")
+  system("echo #{Process.pid} > #{child_pid}")
+end
