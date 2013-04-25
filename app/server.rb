@@ -33,7 +33,7 @@ def send_email feedback
                                                         "when"       => Time.now.strftime("%b %e, %Y %H:%M:%S %Z")
 
   #Pony.mail(:to => "weston.wei@sidways.com", :from => feedback.email, :subject => "A register from #{feedback.name}", :body => body)
-  Pony.mail(:to => 'weston.wei@sidways.com', :via => :smtp, :smtp => {
+  Pony.mail(:to => 'info@sidways.com', :via => :smtp, :smtp => {
       :host     => 'mail.sidways.com',
       :port     => '25',
       :user     => 'patrick_contact@sidways.com',
