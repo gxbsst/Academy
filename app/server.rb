@@ -97,8 +97,8 @@ end
 
 set :public_folder, 'public'
 
-get '/' do
-  redirect '/index.html'
+get '/index' do
+  File.read(File.join(File.expand_path('../../public', __FILE__), 'index.html'))
 end
 
 post '/create' do
